@@ -51,7 +51,7 @@ class PetViewSet(viewsets.ModelViewSet):
     """
     queryset = Pet.objects.select_related('tutor')
     serializer_class = PetSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrFuncionario] # <-- Permissões
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrFuncionario] # Protegido por autenticação
     parser_classes = [MultiPartParser, FormParser, JSONParser] # <-- Suporte a multipart/form-data
     
     # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)

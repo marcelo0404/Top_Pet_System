@@ -1,3 +1,8 @@
+declare global {
+  interface Window {
+    loginService?: typeof import("@/services/authService").login;
+  }
+}
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,15 +13,38 @@ import { Separator } from "@/components/ui/separator";
 import drAnaClara from "@/assets/dr-ana-clara.jpeg";
 
 const LoginForm = () => {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  // Importa o serviço de autenticação
+  // @ts-ignore
+  import("@/services/authService").then(({ login }) => {
+    window.loginService = login;
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", { email, password });
-    // Simular login bem-sucedido
-    navigate("/dashboard");
+    setLoading(true);
+    setError(null);
+    try {
+      // username = email
+      const login = window.loginService;
+      if (!login) throw new Error("Serviço de login não carregado");
+      const data = await login({ username, password });
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/dashboard");
+      } else {
+        setError("Credenciais inválidas");
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.non_field_errors?.[0] || "Credenciais inválidas");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,22 +66,33 @@ const LoginForm = () => {
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2 flex flex-col">
+                  <Label htmlFor="username" className="text-foreground font-medium">
+                    Usuário
+                  </Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder=" admin ou seu usuário"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="h-12 border-input rounded-md focus:border-primary transition-colors"
+                  />
+                </div>
+                <div className="space-y-2 flex flex-col">
                   <Label htmlFor="email" className="text-foreground font-medium">
                     Email
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder=" seu@email.com"
+                    placeholder="seu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12 border-input rounded-md focus:border-primary transition-colors"
-                    required
                   />
                 </div>
-                
                 <div className="space-y-2 flex flex-col">
-                  <Label htmlFor=" password" className="text-foreground font-medium">
+                  <Label htmlFor="password" className="text-foreground font-medium">
                     Senha
                   </Label>
                   <Input
@@ -66,23 +105,24 @@ const LoginForm = () => {
                     required
                   />
                 </div>
-
                 <Button 
                   type="submit" 
                   className="w-full h-12 hover:opacity-90 rounded-lg transition-all duration-300 text-white font-semibold"
                   style={{ background: 'var(--gradient-primary)' }}
+                  disabled={loading}
                 >
-                  Entrar
+                  {loading ? "Entrando..." : "Entrar"}
                 </Button>
+                {error && (
+                  <div className="text-red-600 text-sm mt-2 text-center">{error}</div>
+                )}
               </form>
-
               <div className="relative">
                 <Separator className="my-6" />
                 <span className="absolute left-1/2 rounded-md top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-sm text-muted-foreground">
                   ou
                 </span>
               </div>
-
               <div className="text-center">
                 <p className="text-muted-foreground">
                   Não tem uma conta?{" "}
@@ -94,7 +134,6 @@ const LoginForm = () => {
             </CardContent>
           </Card>
         </div>
-
         {/* Right side - Testimonial */}
         <div className="hidden lg:block">
           <div className="text-center text-white space-y-8">
@@ -108,7 +147,6 @@ const LoginForm = () => {
                 Recomendo para todos os colegas veterinários.
               </p>
             </div>
-            
             <div className="flex items-center justify-center space-x-4">
               <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white/30">
                 <img 

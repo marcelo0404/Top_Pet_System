@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-etva7+wfjug1hjg$5mb4fzq***=o&w0$rllq%!czw!xmj)y8xa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'users',
     'agendamentos',
     'prontuarios',
+    'corsheaders',
 ]
 
 # Configuração de autenticação do DRF 
@@ -103,6 +104,7 @@ SPECTACULAR_SETTINGS = {
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,6 +113,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Permitir CORS para desenvolvimento
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'top_pet.urls'
 

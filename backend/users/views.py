@@ -13,6 +13,8 @@ from .permissions import IsAdminRole, IsFuncionarioOrAdmin, CanManageClients # I
 from .models import Profile  # Importa o modelo Profile
 from .swagger_schemas import SELF_REGISTER_SCHEMA, USER_SELF_REGISTER_EXAMPLES
 import os
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
 class LogResponseSerializer(serializers.Serializer):
     """Serializer para resposta dos logs"""
@@ -237,3 +239,10 @@ class UserFuncionarioViewSet(viewsets.ModelViewSet):
             instance.delete()
         else:
             raise serializers.ValidationError({"detail": "Funcionários podem excluir apenas usuários clientes."})
+
+class CustomAuthToken(APIView):
+    """
+    Autenticação customizada: aceita username OU email + password
+    Retorna token DRF
+    """
+    # Removido: autenticação por email. Use apenas username e password pelo endpoint padrão.

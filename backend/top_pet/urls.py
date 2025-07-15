@@ -10,6 +10,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from users.views import CustomAuthToken
 
 # Agrupando as URLs da API
 api_urlpatterns = [

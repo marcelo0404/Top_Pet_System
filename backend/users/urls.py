@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     LogFileView, UserCreateView, UserAdminViewSet, UserFuncionarioViewSet,
-    UserFuncionarioCreateView, UserAdminCreateView, UserProfileView
+    UserFuncionarioCreateView, UserAdminCreateView, UserProfileView, CustomAuthToken
 )
 
 # Create a router for viewsets
@@ -17,4 +17,5 @@ urlpatterns = [
     path('funcionario/create-user/', UserFuncionarioCreateView.as_view(), name='funcionario-create-user'),
     path('admin/create-user/', UserAdminCreateView.as_view(), name='admin-create-user'),
     path('', include(router.urls)),
+    path('auth/', CustomAuthToken.as_view(), name='custom-auth'),
 ]

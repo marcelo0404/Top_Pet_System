@@ -10,13 +10,24 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Edit2, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getPets } from "@/services/petService";
+import { login } from "@/services/authService";
 
 const GerenciarPerfil = () => {
   const navigate = useNavigate();
   const [pets, setPets] = useState<any[]>([]);
 
   useEffect(() => {
-    getPets().then(setPets).catch(() => setPets([]));
+    async function fetchPets() {
+      try {
+        // Troque para usuário/senha válidos
+        const auth = await login("admin", "admin");
+        const pets = await getPets(auth.token);
+        setPets(pets);
+      } catch {
+        setPets([]);
+      }
+    }
+    fetchPets();
   }, []);
 
   return (
