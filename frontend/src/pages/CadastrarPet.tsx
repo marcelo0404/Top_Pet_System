@@ -15,7 +15,7 @@ const CadastrarPet = () => {
   const [nome, setNome] = useState("");
   const [especie, setEspecie] = useState("");
   const [raca, setRaca] = useState("");
-  const [dataNascimento, setDataNascimento] = useState<Date>();
+  const [dataNascimento, setDataNascimento] = useState<Date | null>(null);
   const [genero, setGenero] = useState("macho");
   const [foto, setFoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -30,14 +30,59 @@ const CadastrarPet = () => {
   };
 
   const handleSalvar = () => {
-    // Aqui seria a lógica para salvar o pet
-    console.log("Salvando pet:", { nome, especie, raca, dataNascimento, genero, foto });
-    navigate("/dashboard");
+    // Validação simples
+    if (!nome || !especie || !raca || !dataNascimento || !genero) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    // Formatar data para string ISO (YYYY-MM-DD)
+    const dataNascimentoStr = dataNascimento instanceof Date ? dataNascimento.toISOString().split('T')[0] : "";
+
+    // Montar form data para envio (incluindo imagem)
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("especie", especie);
+    formData.append("raca", raca);
+    formData.append("data_nascimento", dataNascimentoStr);
+    formData.append("genero", genero);
+    if (foto) {
+      formData.append("foto", foto);
+    }
+
+    const token = localStorage.getItem("token");
+    fetch("http://127.0.0.1:8000/api/pets/", {
+      method: "POST",
+      headers: {
+        Authorization: token ? `Token ${token}` : "",
+      },
+      body: formData,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          let errorMsg = `Erro ao cadastrar pet. Código: ${res.status}`;
+          try {
+            const errorData = await res.json();
+            errorMsg += "\nResposta do backend: " + JSON.stringify(errorData);
+          } catch (e) {
+            errorMsg += "\nNão foi possível ler a resposta detalhada do backend.";
+          }
+          throw new Error(errorMsg);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        alert("Pet cadastrado com sucesso!");
+        navigate("/dashboard");
+      })
+      .catch((err) => {
+        alert("Erro ao cadastrar pet: " + err.message);
+      });
   };
 
   const handleCancelar = () => {
     navigate("/dashboard");
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,30 +167,16 @@ const CadastrarPet = () => {
 
               {/* Data de Nascimento */}
               <div className="space-y-2 flex flex-col">
-                <Label>Data de Nascimento</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !dataNascimento && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dataNascimento ? format(dataNascimento, "PPP") : <span>Selecione uma data</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={dataNascimento}
-                      onSelect={setDataNascimento}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Label htmlFor="data_nascimento">Data de Nascimento</Label>
+                <Input
+                  id="data_nascimento"
+                  type="date"
+                  value={dataNascimento ? dataNascimento.toISOString().split('T')[0] : ''}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setDataNascimento(val ? new Date(val) : null);
+                  }}
+                />
               </div>
 
               {/* Foto */}
