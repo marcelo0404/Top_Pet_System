@@ -5,44 +5,36 @@ import { Calendar } from "@/components/ui/calendar";
 import { Heart, PawPrint, Calendar as CalendarIcon, Clock, User, Phone, Mail, MapPin, ArrowRight, Plus } from "@/components/ui/lucide-icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAgendamentos } from "@/services/agendamentoService";
 
 const DashboardCliente = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const navigate = useNavigate();
   const [pets, setPets] = useState<any[]>([]);
+  const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const [loadingAgendamentos, setLoadingAgendamentos] = useState(true);
 
-  // Próximos compromissos mockados
-  const proximosCompromissos: Array<{
-    id: number;
-    petName: string;
-    service: string;
-    date: string;
-    time: string;
-    veterinario: string;
-    status: string;
-  }> = [
-    {
-      id: 1,
-      petName: "Buddy",
-      service: "Consulta",
-      date: "15, Dezembro, 2024",
-      time: "10:00",
-      veterinario: "Dr. Smith",
-      status: "agendado"
-    },
-    {
-      id: 2,
-      petName: "Whiskers",
-      service: "Vacinação",
-      date: "8, Janeiro, 2025",
-      time: "14:30",
-      veterinario: "Dr. Lee",
-      status: "agendado"
-    }
-  ];
+  // Próximos compromissos reais (ver definição mais abaixo)
 
   // Dados mock para demonstração
-  const stats = {
+  // stats agora depende de proximosCompromissos, que é definido depois
+  // stats será definido após proximosCompromissos
+  let stats: any = null;
+
+
+  // Substitua proximosCompromissos pelo agendamentos reais (apenas UMA declaração!):
+  const proximosCompromissos = agendamentos.map((a: any) => ({
+    id: a.id,
+    petName: a.pet?.nome || "",
+    service: a.servico?.nome || "",
+    date: new Date(a.data_hora).toLocaleDateString('pt-BR'),
+    time: new Date(a.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    veterinario: a.veterinario?.nome || "-",
+    status: a.status || "agendado"
+  }));
+
+  // Defina stats depois de proximosCompromissos
+  stats = {
     totalPets: pets.length,
     proximosCompromissos: proximosCompromissos.length,
     servicosRecentes: 5
@@ -68,6 +60,30 @@ const DashboardCliente = () => {
     fetchPets();
   }, []);
 
+  useEffect(() => {
+    async function fetchAgendamentos() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Usuário não autenticado");
+        const ags = await getAgendamentos(token);
+        // Filtra apenas agendamentos futuros e do usuário logado
+        const username = usernameFromToken();
+        const petsIds = pets.map(p => p.id);
+        const now = new Date();
+        const agsFiltrados = ags.filter((a: any) =>
+          a.pet && petsIds.includes(a.pet.id) &&
+          new Date(a.data_hora) > now
+        );
+        setAgendamentos(agsFiltrados);
+      } catch {
+        setAgendamentos([]);
+      } finally {
+        setLoadingAgendamentos(false);
+      }
+    }
+    if (pets.length > 0) fetchAgendamentos();
+  }, [pets]);
+
   const historicoServicos = [
     {
       id: 1,
@@ -89,6 +105,9 @@ const DashboardCliente = () => {
     }
   ];
 
+  // (Removido: duplicidade de declaração de proximosCompromissos)
+
+  if (!stats) return null; // ou um loading melhor
   return (
     <div className="min-h-screen bg-background">
       {/* Header Navigation */}

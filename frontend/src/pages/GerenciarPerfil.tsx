@@ -250,7 +250,7 @@ const GerenciarPerfil = () => {
                             variant="outline" 
                             size="sm" 
                             className="w-full"
-                            onClick={() => navigate("/gerenciar-pet")}
+                            onClick={() => navigate(`/gerenciar-pet/${pet.id}`)}
                           >
                             Ver Perfil →
                           </Button>
