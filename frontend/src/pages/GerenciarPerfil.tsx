@@ -16,13 +16,24 @@ const GerenciarPerfil = () => {
   const navigate = useNavigate();
   const [pets, setPets] = useState<any[]>([]);
 
+  // Função utilitária para obter o username salvo no login
+  function obterUsername() {
+    return localStorage.getItem("username") || "";
+  }
+
   useEffect(() => {
     async function fetchPets() {
       try {
-        // Troque para usuário/senha válidos
-        const auth = await login("admin", "admin");
-        const pets = await getPets(auth.token);
-        setPets(pets);
+        // Busca o token salvo no login
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Usuário não autenticado");
+        const petsBackend = await getPets(token);
+        // Filtra apenas os pets do usuário logado
+        const username = obterUsername();
+        const petsFiltrados = petsBackend.filter(
+          (pet: any) => pet.tutor_detail && pet.tutor_detail.username === username
+        );
+        setPets(petsFiltrados);
       } catch {
         setPets([]);
       }
@@ -68,7 +79,7 @@ const GerenciarPerfil = () => {
                 </Badge>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p>Membro desde: Dezembro de 2022</p>
-                  <p>Total de Pets Registrados: 6</p>
+                  <p>Total de Pets Registrados: {pets.length}</p>
                 </div>
                 <Button variant="outline" className="mt-4 w-full" size="sm">
                   <Edit2 className="h-4 w-4 mr-2" />
@@ -95,33 +106,33 @@ const GerenciarPerfil = () => {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label htmlFor="nome">Nome Completo</Label>
                         <Input id="nome" defaultValue="Beatriz Oliveira" />
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label htmlFor="email">Email</Label>
                         <Input id="email" defaultValue="beatriz.oliver@email.com" />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label htmlFor="telefone">Telefone</Label>
                         <Input id="telefone" defaultValue="(84)98765-4321" />
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label htmlFor="pais">País</Label>
                         <Input id="pais" defaultValue="Brasil" />
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
                       <Label htmlFor="estado">Estado</Label>
                       <Input id="estado" defaultValue="Rio Grande do Norte" />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
                       <Label htmlFor="endereco">Endereço Completo</Label>
                       <Input id="endereco" defaultValue="Rua das Flores, 123, Apto 5B, São Paulo - SP, Brasil" />
                     </div>
@@ -196,23 +207,23 @@ const GerenciarPerfil = () => {
                     <CardTitle>Segurança</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
                       <Label htmlFor="current-password">Senha Atual</Label>
                       <Input id="current-password" type="password" />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
                       <Label htmlFor="new-password">Nova Senha</Label>
                       <Input id="new-password" type="password" />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-col">
                       <Label htmlFor="confirm-password">Confirmar Senha</Label>
                       <Input id="confirm-password" type="password" />
                     </div>
 
-                    <div className="flex justify-end">
-                      <Button className="bg-[#FF6B47] hover:bg-[#E55A3E] text-white">
+                    <div className="flex justify-end ">
+                      <Button className="rounded-md p-3 bg-[#FF6B47] hover:bg-[#E55A3E] text-white">
                         Salvar Alterações
                       </Button>
                     </div>

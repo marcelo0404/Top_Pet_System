@@ -3,21 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Heart, PawPrint, Calendar as CalendarIcon, Clock, User, Phone, Mail, MapPin, ArrowRight, Plus } from "@/components/ui/lucide-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const DashboardCliente = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const navigate = useNavigate();
+  const [pets, setPets] = useState<any[]>([]);
 
-  // Dados mock para demonstração
-  const stats = {
-    totalPets: 3,
-    proximosCompromissos: 2,
-    servicosRecentes: 5
-  };
-
-  const proximosCompromissos = [
+  // Próximos compromissos mockados
+  const proximosCompromissos: Array<{
+    id: number;
+    petName: string;
+    service: string;
+    date: string;
+    time: string;
+    veterinario: string;
+    status: string;
+  }> = [
     {
       id: 1,
       petName: "Buddy",
@@ -38,32 +41,32 @@ const DashboardCliente = () => {
     }
   ];
 
-  const pets = [
-    {
-      id: 1,
-      name: "Buddy",
-      species: "Cão",
-      breed: "Golden Retriever",
-      age: "3 Anos",
-      image: "/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png"
-    },
-    {
-      id: 2,
-      name: "Whiskers",
-      species: "Gato",
-      breed: "Siamês",
-      age: "2 Anos",
-      image: "/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png"
-    },
-    {
-      id: 3,
-      name: "Luna",
-      species: "Pássaro",
-      breed: "Cockatiel",
-      age: "1 Ano",
-      image: "/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png"
+  // Dados mock para demonstração
+  const stats = {
+    totalPets: pets.length,
+    proximosCompromissos: proximosCompromissos.length,
+    servicosRecentes: 5
+  };
+
+  // Busca os pets do usuário autenticado ao carregar o dashboard
+  useEffect(() => {
+    async function fetchPets() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Usuário não autenticado");
+        const petsBackend = await import("@/services/petService").then(m => m.getPets(token));
+        // Filtra apenas os pets do usuário logado
+        const username = usernameFromToken();
+        const petsFiltrados = petsBackend.filter(
+          (pet: any) => pet.tutor_detail && pet.tutor_detail.username === username
+        );
+        setPets(petsFiltrados);
+      } catch {
+        setPets([]);
+      }
     }
-  ];
+    fetchPets();
+  }, []);
 
   const historicoServicos = [
     {
@@ -257,32 +260,35 @@ const DashboardCliente = () => {
                 </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pets.map((pet) => (
-                  <Card key={pet.id}>
-                    <CardContent className="p-6">
-                      <div className="text-center space-y-4">
-                        <div className="w-20 h-20 bg-muted rounded-full mx-auto flex items-center justify-center">
-                          <PawPrint className="h-10 w-10 text-primary" />
+                {pets
+                  .filter(pet => pet.tutor_detail && pet.tutor_detail.username === usernameFromToken())
+                  .map((pet) => (
+                    <Card key={pet.id}>
+                      <CardContent className="p-6">
+                        <div className="text-center space-y-4">
+                          <div className="w-20 h-20 bg-muted rounded-full mx-auto flex items-center justify-center">
+                            <PawPrint className="h-10 w-10 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg">{pet.nome || pet.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {(pet.especie || pet.species) + ' - ' + (pet.raca || pet.breed)}
+                            </p>
+                            <p className="text-sm text-muted-foreground">{pet.idade || pet.age}</p>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => navigate("/gerenciar-pet")}
+                          >
+                            Ver Perfil
+                          </Button>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-lg">{pet.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {pet.species} - {pet.breed}
-                          </p>
-                          <p className="text-sm text-muted-foreground">{pet.age}</p>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => navigate("/gerenciar-pet")}
-                        >
-                          Ver Perfil
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+
               </div>
             </div>
 
@@ -381,5 +387,11 @@ const DashboardCliente = () => {
     </div>
   );
 };
+
+// Função utilitária para extrair o username do token salvo (caso JWT, decodifique, caso token DRF, use localStorage ou contexto de usuário)
+function usernameFromToken() {
+  // Exemplo: supondo que você salva o username no localStorage após login
+  return localStorage.getItem("username") || "";
+}
 
 export default DashboardCliente;

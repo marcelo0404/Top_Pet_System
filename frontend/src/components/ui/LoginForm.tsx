@@ -36,6 +36,7 @@ const LoginForm = () => {
       const data = await login({ username, password });
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("username", username); // Salva o username para uso posterior
         navigate("/dashboard");
       } else {
         setError("Credenciais inválidas");
@@ -77,20 +78,7 @@ const LoginForm = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     className="h-12 border-input rounded-md focus:border-primary transition-colors"
                   />
-                </div>
-                <div className="space-y-2 flex flex-col">
-                  <Label htmlFor="email" className="text-foreground font-medium">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 border-input rounded-md focus:border-primary transition-colors"
-                  />
-                </div>
+                </div>                
                 <div className="space-y-2 flex flex-col">
                   <Label htmlFor="password" className="text-foreground font-medium">
                     Senha
