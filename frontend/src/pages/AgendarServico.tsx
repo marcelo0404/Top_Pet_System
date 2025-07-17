@@ -1,33 +1,51 @@
-import { useState } from "react";
+import { criarAgendamento } from "@/services/agendamentoService";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
+import { getPets } from "@/services/petService";
+import { getServicos } from "@/services/servicoService";
 import { Badge } from "@/components/ui/badge";
 import { PawPrint, ArrowLeft, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { useLocation } from "react-router-dom";
+
 const AgendarServico = () => {
   const navigate = useNavigate();
-  const [selectedPet, setSelectedPet] = useState("");
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const petIdFromQuery = params.get("petId");
+  const [selectedPet, setSelectedPet] = useState(petIdFromQuery || "");
   const [selectedService, setSelectedService] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState("");
 
-  // Dados mock
-  const pets = [
-    { id: "1", name: "Buddy", species: "Cão", breed: "Golden Retriever" },
-    { id: "2", name: "Whiskers", species: "Gato", breed: "Siamês" },
-    { id: "3", name: "Luna", species: "Pássaro", breed: "Cockatiel" }
-  ];
 
-  const services = [
-    { id: "1", name: "Consulta Veterinária", duration: "30min", price: "R$ 80" },
-    { id: "2", name: "Vacinação", duration: "15min", price: "R$ 50" },
-    { id: "3", name: "Banho e Tosa", duration: "2h", price: "R$ 120" },
-    { id: "4", name: "Cirurgia", duration: "3h", price: "R$ 500" },
-    { id: "5", name: "Exame de Sangue", duration: "20min", price: "R$ 60" }
-  ];
+  const [pets, setPets] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem("token");
+        const petsData = await getPets(token || undefined);
+        setPets(petsData);
+        const servicosData = await getServicos(token || undefined);
+        setServices(servicosData);
+      } catch (err: any) {
+        setError("Erro ao buscar dados do backend. Faça login novamente ou tente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const timeSlots = [
     "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"
@@ -35,25 +53,56 @@ const AgendarServico = () => {
 
   const unavailableSlots = ["12:00", "14:00"];
 
-  const handleSchedule = () => {
+  const [agendamentoLoading, setAgendamentoLoading] = useState(false);
+  const [agendamentoError, setAgendamentoError] = useState<string | null>(null);
+
+  const handleSchedule = async () => {
+    setAgendamentoError(null);
     if (selectedPet && selectedService && selectedDate && selectedTime) {
-      // Aqui implementaria a lógica de agendamento
-      alert("Agendamento realizado com sucesso!");
-      navigate("/dashboard");
+      setAgendamentoLoading(true);
+      try {
+        // Montar data_hora no formato ISO completo: YYYY-MM-DDTHH:MM:SS
+        const dateStr = selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : "";
+        const data_hora = `${dateStr}T${selectedTime}:00`;
+        const token = localStorage.getItem("token") || undefined;
+        await criarAgendamento({
+          pet_id: selectedPet,
+          servico_id: selectedService,
+          data_hora,
+          token,
+        });
+        alert("Agendamento realizado com sucesso!");
+        navigate("/dashboard");
+      } catch (err: any) {
+        setAgendamentoError(
+          err?.response?.data ?
+            `Erro ao agendar: ${JSON.stringify(err.response.data)}` :
+            (err?.message || "Erro desconhecido ao agendar.")
+        );
+      } finally {
+        setAgendamentoLoading(false);
+      }
     }
   };
 
   const isFormComplete = selectedPet && selectedService && selectedDate && selectedTime;
 
   const getSelectedPetName = () => {
-    const pet = pets.find(p => p.id === selectedPet);
-    return pet ? pet.name : "Não selecionado";
+    const pet = pets.find((p: any) => String(p.id) === String(selectedPet));
+    return pet ? pet.nome : "Não selecionado";
   };
 
   const getSelectedServiceName = () => {
-    const service = services.find(s => s.id === selectedService);
-    return service ? service.name : "Não selecionado";
+    const service = services.find((s: any) => String(s.id) === String(selectedService));
+    return service ? service.nome : "Não selecionado";
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-background text-lg">Carregando dados...</div>;
+  }
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center bg-background text-red-600 text-lg">{error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -100,11 +149,15 @@ const AgendarServico = () => {
                   <SelectValue placeholder="Selecione um pet..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {pets.map((pet) => (
-                    <SelectItem key={pet.id} value={pet.id}>
-                      {pet.name} - {pet.species} ({pet.breed})
-                    </SelectItem>
-                  ))}
+                  {pets.length === 0 ? (
+                    <SelectItem value="" disabled>Nenhum pet cadastrado</SelectItem>
+                  ) : (
+                    pets.map((pet: any) => (
+                      <SelectItem key={pet.id} value={String(pet.id)}>
+                        {pet.nome} - {pet.especie} ({pet.raca})
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </CardContent>
@@ -121,11 +174,15 @@ const AgendarServico = () => {
                   <SelectValue placeholder="Selecione um serviço..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {services.map((service) => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name} - {service.duration} ({service.price})
-                    </SelectItem>
-                  ))}
+                  {services.length === 0 ? (
+                    <SelectItem value="" disabled>Nenhum serviço disponível</SelectItem>
+                  ) : (
+                    services.map((service: any) => (
+                      <SelectItem key={service.id} value={String(service.id)}>
+                        {service.nome} - {service.duracao ? service.duracao : ""} (R$ {service.preco})
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </CardContent>
@@ -137,12 +194,15 @@ const AgendarServico = () => {
               <CardTitle>Escolha uma data</CardTitle>
             </CardHeader>
             <CardContent>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={(date: Date) => date < new Date()}
-                className="rounded-md border w-full flex justify-center"
+              <input
+                type="date"
+                className="border rounded px-3 py-2 w-full"
+                value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                min={new Date().toISOString().split('T')[0]}
+                onChange={e => {
+                  const val = e.target.value;
+                  setSelectedDate(val ? new Date(val) : undefined);
+                }}
               />
             </CardContent>
           </Card>
@@ -216,13 +276,17 @@ const AgendarServico = () => {
             </CardContent>
           </Card>
 
+          {/* Feedback de erro/agendamento */}
+          {agendamentoError && (
+            <div className="text-red-600 text-center mb-2">{agendamentoError}</div>
+          )}
           {/* Botão de Agendar */}
           <Button 
             className="w-full bg-primary text-white py-6 text-lg"
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || agendamentoLoading}
             onClick={handleSchedule}
           >
-            Agendar
+            {agendamentoLoading ? "Agendando..." : "Agendar"}
           </Button>
         </div>
       </main>

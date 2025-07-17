@@ -14,6 +14,29 @@ const GerenciarPet = () => {
   const [pet, setPet] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const [loadingAgendamentos, setLoadingAgendamentos] = useState(true);
+  // Buscar agendamentos do pet
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || !id) return;
+    setLoadingAgendamentos(true);
+    fetch("http://127.0.0.1:8000/api/agendamentos/", {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Erro ao buscar agendamentos");
+        return res.json();
+      })
+      .then((data) => {
+        // Filtra apenas os agendamentos deste pet
+        setAgendamentos(data.filter((a: any) => a.pet && String(a.pet.id) === String(id)));
+        setLoadingAgendamentos(false);
+      })
+      .catch(() => setLoadingAgendamentos(false));
+  }, [id]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -54,36 +77,7 @@ const GerenciarPet = () => {
       });
   }, [id]);
 
-  const agendamentos = [
-    {
-      id: 1,
-      service: "Banho e tosa",
-      date: "13/08/2025",
-      status: "Pendente",
-      icon: Droplets
-    },
-    {
-      id: 2,
-      service: "Check-up Anual",
-      date: "15/07/2025",
-      status: "Realizado",
-      icon: Stethoscope
-    },
-    {
-      id: 3,
-      service: "Banho Básico",
-      date: "13/07/2025",
-      status: "Realizado",
-      icon: Droplets
-    },
-    {
-      id: 4,
-      service: "Vacinação",
-      date: "09/07/2025",
-      status: "Realizado",
-      icon: Syringe
-    }
-  ];
+
 
   const prontuarios = [
     {
@@ -206,7 +200,7 @@ const GerenciarPet = () => {
                   <TabsTrigger value="agendamentos">Agendamentos</TabsTrigger>
                   <TabsTrigger value="prontuario">Prontuários Médicos</TabsTrigger>
                 </TabsList>
-                <Button>
+                <Button onClick={() => navigate(`/agendar`)}>
                   <Calendar className="w-4 h-4 mr-2" />
                   Novo Agendamento
                 </Button>
@@ -284,33 +278,33 @@ const GerenciarPet = () => {
                     <CardTitle>Agendamentos do Pet</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {agendamentos.map((agendamento) => {
-                        const IconComponent = agendamento.icon;
-                        return (
+                    {loadingAgendamentos ? (
+                      <div className="p-4 text-center text-muted-foreground">Carregando agendamentos...</div>
+                    ) : agendamentos.length === 0 ? (
+                      <div className="p-4 text-center text-muted-foreground">Nenhum agendamento encontrado para este pet.</div>
+                    ) : (
+                      <div className="space-y-4">
+                        {agendamentos.map((agendamento) => (
                           <div key={agendamento.id} className="flex items-center justify-between p-4 border rounded-lg">
                             <div className="flex items-center space-x-4">
                               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                                <IconComponent className="w-5 h-5 text-primary" />
+                                <Calendar className="w-5 h-5 text-primary" />
                               </div>
                               <div>
-                                <h4 className="font-medium">{agendamento.service}</h4>
-                                <p className="text-sm text-muted-foreground">{agendamento.date}</p>
+                                <h4 className="font-medium">{agendamento.servico?.nome || "-"}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {agendamento.data_hora ? new Date(agendamento.data_hora).toLocaleString() : "-"}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{agendamento.observacoes || ""}</p>
                               </div>
                             </div>
                             <Badge className={getStatusColor(agendamento.status)}>
                               {agendamento.status}
                             </Badge>
                           </div>
-                        );
-                      })}
-                    </div>
-                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                      <h4 className="font-medium mb-2">Observações</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Banho e tosa marcado para o dia 13/08/2025.
-                      </p>
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
