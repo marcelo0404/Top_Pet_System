@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Eye, EyeOff } from "@/components/ui/lucide-icons";
 import petOwner from "@/assets/pet-owner.jpg";
+import { signup } from "@/services/authService";
 
 const SignupPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -17,10 +18,27 @@ const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [newsletter, setNewsletter] = useState(false);
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup attempt:", { firstName, lastName, email, password, acceptTerms, newsletter });
+    setError(null);
+    setSuccess(false);
+    try {
+      await signup({
+        username,
+        password,
+        confirm_password: password, // ou adicione um campo de confirmação se desejar
+        email,
+        first_name: firstName,
+        last_name: lastName
+      });
+      setSuccess(true);
+    } catch (err: any) {
+      setError(err?.detail || "Erro ao cadastrar usuário");
+    }
   };
 
   return (
@@ -145,6 +163,21 @@ const SignupPage = () => {
                   <p className="text-sm text-muted-foreground">8 ou mais caracteres</p>
                 </div>
 
+                <div className="space-y-2 flex flex-col">
+                  <Label htmlFor="username" className="text-foreground font-medium">
+                    Nome de Usuário
+                  </Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Escolha um nome de usuário"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="h-12 border-input focus:border-primary transition-colors"
+                    required
+                  />
+                </div>
+
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Checkbox 
@@ -176,6 +209,11 @@ const SignupPage = () => {
                   </div>
                 </div>
 
+                {error && <div className="text-red-600 text-sm">{error}</div>}
+                {success && <div className="text-green-600 text-sm">Cadastro realizado com sucesso! Faça login.</div>}
+
+                {error && <div className="text-red-600 text-sm">{error}</div>}
+                {success && <div className="text-green-600 text-sm">Cadastro realizado com sucesso! Faça login.</div>}
                 <Button 
                   type="submit" 
                   className="w-full h-12 rounded-lg bg-gradient-primary hover:opacity-90 transition-all duration-300 text-white font-semibold shadow-glow"

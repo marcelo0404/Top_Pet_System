@@ -100,7 +100,12 @@ const CadastrarPet = () => {
             >
               Dashboard
             </button>
-            <span className="text-muted-foreground">Meus Pets</span>
+            <button
+              onClick={() => navigate("/gerenciar-perfil?tab=meus-pets")}
+              className="text-primary font-medium hover:text-primary/80"
+            >
+              Meus Pets
+            </button>
             <span className="text-muted-foreground">Consultas</span>
             <span className="text-muted-foreground">Configurações</span>
           </div>

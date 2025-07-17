@@ -121,7 +121,9 @@ const GerenciarPerfil = () => {
                   {user?.profile?.role_display || "CLIENTE"}
                 </Badge>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Membro desde: Dezembro de 2022</p>
+                  <p>
+                    Membro desde: {user?.date_joined ? new Date(user.date_joined).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '---'}
+                  </p>
                   <p>Total de Pets Registrados: {pets.length}</p>
                 </div>
                 <Button variant="outline" className="mt-4 w-full" size="sm">
@@ -134,7 +136,13 @@ const GerenciarPerfil = () => {
 
           {/* Main Content */}
           <div className="flex-1">
-            <Tabs defaultValue="info" className="w-full">
+            {/* Detecta tab via query string */}
+            {(() => {
+              const search = window.location.search;
+              const params = new URLSearchParams(search);
+              const initialTab = params.get("tab") === "meus-pets" ? "pets" : "info";
+              return (
+                <Tabs defaultValue={initialTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="info">Informações Pessoais</TabsTrigger>
                 <TabsTrigger value="pets">Meus Pets</TabsTrigger>
@@ -291,7 +299,9 @@ const GerenciarPerfil = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
-            </Tabs>
+                </Tabs>
+              );
+            })()}
           </div>
         </div>
       </div>

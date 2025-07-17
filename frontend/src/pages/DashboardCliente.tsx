@@ -87,20 +87,20 @@ const DashboardCliente = () => {
   const historicoServicos = [
     {
       id: 1,
-      service: "Full Grooming (Buddy)",
-      date: "December 10, 2024",
+      service: "Exame de Sangue",
+      date: "10-12-2024",
       status: "Completo"
     },
     {
       id: 2,
-      service: "Annual Check-up (Whiskers)",
-      date: "November 25, 2024",
+      service: "Banho e tosa",
+      date: "25-11-2024",
       status: "Completo"
     },
     {
       id: 3,
-      service: "Basic Bath (Luna)",
-      date: "October 1, 2024",
+      service: "Vacinação",
+      date: "23-11-2024",
       status: "Completo"
     }
   ];
@@ -126,9 +126,9 @@ const DashboardCliente = () => {
               <Button variant="ghost">Admin</Button>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
+              {/*<Button variant="outline" size="sm">
                 Search services or pets...
-              </Button>
+              </Button>*/}
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-primary rounded-full"></div>
               </div>
