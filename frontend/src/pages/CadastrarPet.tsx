@@ -88,7 +88,7 @@ const CadastrarPet = () => {
             
             <div className="space-y-6">
               {/* Nome do Pet */}
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label htmlFor="nome">Nome do Pet</Label>
                 <Input
                   id="nome"
@@ -99,7 +99,7 @@ const CadastrarPet = () => {
               </div>
 
               {/* Espécie */}
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label htmlFor="especie">Espécie</Label>
                 <Input
                   id="especie"
@@ -110,7 +110,7 @@ const CadastrarPet = () => {
               </div>
 
               {/* Raça */}
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label htmlFor="raca">Raça</Label>
                 <Input
                   id="raca"
@@ -121,7 +121,7 @@ const CadastrarPet = () => {
               </div>
 
               {/* Data de Nascimento */}
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label>Data de Nascimento</Label>
                 <Popover>
                   <PopoverTrigger asChild>

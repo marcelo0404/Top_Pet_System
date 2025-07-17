@@ -15,6 +15,7 @@ import { login } from "@/services/authService";
 const GerenciarPerfil = () => {
   const navigate = useNavigate();
   const [pets, setPets] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
 
   // Função utilitária para obter o username salvo no login
   function obterUsername() {
@@ -40,6 +41,46 @@ const GerenciarPerfil = () => {
     }
     fetchPets();
   }, []);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Usuário não autenticado");
+        const res = await fetch("http://localhost:8000/api/me/", {
+          headers: { Authorization: `Token ${token}` }
+        });
+        if (!res.ok) throw new Error("Erro ao buscar usuário");
+        const data = await res.json();
+        setUser(data);
+      } catch {
+        setUser(null);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  // Função para atualizar dados do usuário
+  async function atualizarUsuario(campos: any) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Usuário não autenticado");
+      const res = await fetch("http://localhost:8000/api/me/", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`
+        },
+        body: JSON.stringify(campos)
+      });
+      if (!res.ok) throw new Error("Erro ao atualizar usuário");
+      const data = await res.json();
+      setUser(data);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,9 +114,11 @@ const GerenciarPerfil = () => {
                   <AvatarImage src="/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png" />
                   <AvatarFallback>BO</AvatarFallback>
                 </Avatar>
-                <h2 className="text-xl font-semibold mb-2">Beatriz Oliveira</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  {user ? `${user.first_name} ${user.last_name}` : "Usuário"}
+                </h2>
                 <Badge variant="secondary" className="mb-4">
-                  CLIENTE
+                  {user?.profile?.role_display || "CLIENTE"}
                 </Badge>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p>Membro desde: Dezembro de 2022</p>
@@ -105,52 +148,70 @@ const GerenciarPerfil = () => {
                     <CardTitle>Informações Pessoais</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const form = e.target as HTMLFormElement;
+                      const formData = new FormData(form);
+                      const campos: any = {
+                        first_name: formData.get("nome")?.toString().split(" ")[0] || "",
+                        last_name: formData.get("nome")?.toString().split(" ").slice(1).join(" ") || "",
+                        email: formData.get("email") || "",
+                        profile: {
+                          telefone: formData.get("telefone") || "",
+                          endereco: formData.get("endereco") || "",
+                          especialidade: formData.get("bio") || ""
+                        }
+                      };
+                      await atualizarUsuario(campos);
+                    }}>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2 flex flex-col">
                         <Label htmlFor="nome">Nome Completo</Label>
-                        <Input id="nome" defaultValue="Beatriz Oliveira" />
+                        <Input id="nome" name="nome" defaultValue={user ? `${user.first_name} ${user.last_name}` : ""} />
                       </div>
                       <div className="space-y-2 flex flex-col">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" defaultValue="beatriz.oliver@email.com" />
+                        <Input id="email" name="email" defaultValue={user?.email || ""} />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2 flex flex-col">
                         <Label htmlFor="telefone">Telefone</Label>
-                        <Input id="telefone" defaultValue="(84)98765-4321" />
+                        <Input id="telefone" name="telefone" defaultValue={user?.profile?.telefone || ""} />
                       </div>
                       <div className="space-y-2 flex flex-col">
                         <Label htmlFor="pais">País</Label>
-                        <Input id="pais" defaultValue="Brasil" />
+                        <Input id="pais" name="pais" value="Brasil" readOnly />
                       </div>
                     </div>
 
                     <div className="space-y-2 flex flex-col">
                       <Label htmlFor="estado">Estado</Label>
-                      <Input id="estado" defaultValue="Rio Grande do Norte" />
+                      <Input id="estado" name="estado" defaultValue={user?.profile?.endereco || ""} />
                     </div>
 
                     <div className="space-y-2 flex flex-col">
                       <Label htmlFor="endereco">Endereço Completo</Label>
-                      <Input id="endereco" defaultValue="Rua das Flores, 123, Apto 5B, São Paulo - SP, Brasil" />
+                      <Input id="endereco" name="endereco" defaultValue={user?.profile?.endereco || ""} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="bio">Bio / Sobre Mim</Label>
                       <Textarea 
                         id="bio" 
+                        name="bio"
                         rows={4}
-                        defaultValue="Entusiasta de animais e dedicada tutora de seis adoráveis pets. Apaixonada por longas caminhadas no parque e novas aventuras com meus companheiros peludos."
+                        defaultValue={user?.profile?.especialidade || ""}
                       />
                     </div>
 
                     <div className="flex justify-end">
-                      <Button className="bg-[#FF6B47] hover:bg-[#E55A3E] text-white">
+                      <Button className="rounded-md p-3 bg-[#FF6B47] hover:bg-[#E55A3E] text-white" type="submit">
                         Salvar Alterações
                       </Button>
                     </div>
+                    </form>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -161,9 +222,9 @@ const GerenciarPerfil = () => {
                   <h2 className="text-2xl font-semibold">Meus Pets</h2>
                   <Button 
                     onClick={() => navigate("/cadastrar-pet")}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="rounded-md p-3 bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    {/*<Plus className="h-4 w-4 mr-2" />*/}
                     Add Novo Pet
                   </Button>
                 </div>
@@ -174,17 +235,17 @@ const GerenciarPerfil = () => {
                       <CardContent className="p-4">
                         <div className="aspect-square bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
                           <img 
-                            src={pet.image} 
-                            alt={pet.name}
+                            src={pet.foto || pet.image || "/img/pet-placeholder.png"} 
+                            alt={pet.nome || pet.name}
                             className="w-full h-full object-cover rounded-lg"
                           />
                         </div>
                         <div className="text-center">
-                          <h3 className="font-semibold text-lg mb-1">{pet.name}</h3>
+                          <h3 className="font-semibold text-lg mb-1">{pet.nome || pet.name}</h3>
                           <p className="text-sm text-muted-foreground mb-1">
-                            {pet.species} - {pet.breed}
+                            {(pet.especie || pet.species) + ' - ' + (pet.raca || pet.breed)}
                           </p>
-                          <p className="text-sm text-muted-foreground mb-3">{pet.age}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{pet.idade || pet.age}</p>
                           <Button 
                             variant="outline" 
                             size="sm" 
