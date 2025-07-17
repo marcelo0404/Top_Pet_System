@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Heart, Calendar, Plus, Edit, Stethoscope, Droplets, Syringe, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,22 +9,50 @@ import { Badge } from "@/components/ui/badge";
 const GerenciarPet = () => {
   const navigate = useNavigate();
 
-  // Mock data do pet
-  const pet = {
-    name: "Max",
-    species: "Cão",
-    breed: "Golden Retriever",
-    age: "4 Anos",
-    birthDate: "15/03/2021",
-    gender: "Macho",
-    color: "Dourado",
-    weight: "28.5 kg",
-    ownerName: "Ana Silva",
-    ownerAddress: "Rua das Flores, 123, São Paulo - SP",
-    ownerContact: "ana.silva@example.com | (11) 98765-4321",
-    observations: "Max é um cão muito dócil e brincalhão. Adora passeios longos e tem boa socialização com outros animais e crianças. Não possui histórico de alergias ou problemas de saúde crônicos.",
-    photo: "/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png"
-  };
+  // Pega o id do pet da URL
+  const { id } = useParams();
+  const [pet, setPet] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Token de autenticação não encontrado. Faça login novamente.");
+      setLoading(false);
+      return;
+    }
+    if (!id) {
+      setError("ID do pet não informado na URL.");
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetch(`http://127.0.0.1:8000/api/pets/${id}/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          let msg = "Erro ao buscar dados do pet.";
+          try {
+            const errData = await res.json();
+            if (errData && errData.detail) msg += `\n${errData.detail}`;
+          } catch {}
+          throw new Error(msg);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setPet(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);
 
   const agendamentos = [
     {
@@ -99,6 +127,10 @@ const GerenciarPet = () => {
     }
   };
 
+  if (loading) return <div className="p-8 text-center">Carregando dados do pet...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (!pet) return <div className="p-8 text-center text-muted-foreground">Pet não encontrado.</div>;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header Navigation */}
@@ -144,20 +176,20 @@ const GerenciarPet = () => {
                 <div className="text-center">
                   <div className="w-32 h-32 mx-auto mb-4 rounded-full border-4 border-primary/20 overflow-hidden">
                     <img 
-                      src={pet.photo} 
-                      alt={pet.name}
+                      src={pet.foto || "/placeholder-pet.png"} 
+                      alt={pet.nome}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">{pet.name}</h2>
+                  <h2 className="text-2xl font-bold mb-2">{pet.nome}</h2>
                   <div className="space-y-2 text-left">
                     <div className="flex items-center text-sm text-muted-foreground">
                       <span className="text-red-500 mr-2">🐕</span>
-                      {pet.species} ( {pet.breed} )
+                      {pet.especie} {pet.raca ? `( ${pet.raca} )` : null}
                     </div>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4 mr-2 text-red-500" />
-                      {pet.age}
+                      {pet.data_de_nascimento ? new Date(pet.data_de_nascimento).toLocaleDateString() : "-"}
                     </div>
                   </div>
                 </div>
@@ -194,48 +226,52 @@ const GerenciarPet = () => {
                     <div className="grid grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Nome</h4>
-                        <p className="text-lg">{pet.name}</p>
+                        <p className="text-lg">{pet.nome}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Espécie</h4>
-                        <p className="text-lg">{pet.species}</p>
+                        <p className="text-lg">{pet.especie}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Raça</h4>
-                        <p className="text-lg">{pet.breed}</p>
+                        <p className="text-lg">{pet.raca}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Data de Nascimento</h4>
-                        <p className="text-lg">{pet.birthDate}</p>
+                        <p className="text-lg">{pet.data_de_nascimento ? new Date(pet.data_de_nascimento).toLocaleDateString() : "-"}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Gênero</h4>
-                        <p className="text-lg">{pet.gender}</p>
+                        <p className="text-lg">{pet.sexo === "MACHO" ? "Macho" : pet.sexo === "FEMEA" ? "Fêmea" : "Desconhecido"}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Cor</h4>
-                        <p className="text-lg">{pet.color}</p>
+                        {/* Cor não existe no backend, pode remover ou adaptar */}
+                        <p className="text-lg">-</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Nome do Tutor</h4>
-                        <p className="text-lg">{pet.ownerName}</p>
+                        <p className="text-lg">{pet.tutor_detail ? pet.tutor_detail.username : "-"}</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Peso</h4>
-                        <p className="text-lg">{pet.weight}</p>
+                        {/* Peso não existe no backend, pode remover ou adaptar */}
+                        <p className="text-lg">-</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Endereço do Tutor</h4>
-                        <p className="text-lg">{pet.ownerAddress}</p>
+                        {/* Endereço do tutor não existe no backend, pode remover ou adaptar */}
+                        <p className="text-lg">-</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Contato do Tutor</h4>
-                        <p className="text-lg">{pet.ownerContact}</p>
+                        {/* Contato do tutor não existe no backend, pode remover ou adaptar */}
+                        <p className="text-lg">-</p>
                       </div>
                     </div>
                     <div className="mt-6">
                       <h4 className="font-medium text-muted-foreground mb-3">Observações</h4>
-                      <p className="text-base leading-relaxed">{pet.observations}</p>
+                      <p className="text-base leading-relaxed">{pet.observacoes || "-"}</p>
                     </div>
                   </CardContent>
                 </Card>

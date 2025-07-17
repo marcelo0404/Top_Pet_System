@@ -44,8 +44,12 @@ const CadastrarPet = () => {
     formData.append("nome", nome);
     formData.append("especie", especie);
     formData.append("raca", raca);
-    formData.append("data_nascimento", dataNascimentoStr);
-    formData.append("genero", genero);
+    formData.append("data_de_nascimento", dataNascimentoStr);
+    // O backend espera 'sexo' com valores 'MACHO', 'FEMEA' ou 'DESCONHECIDO'
+    let sexoValue = "DESCONHECIDO";
+    if (genero === "macho") sexoValue = "MACHO";
+    else if (genero === "femea") sexoValue = "FEMEA";
+    formData.append("sexo", sexoValue);
     if (foto) {
       formData.append("foto", foto);
     }
