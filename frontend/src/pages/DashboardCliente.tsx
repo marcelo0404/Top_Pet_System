@@ -286,14 +286,18 @@ const DashboardCliente = () => {
                       <CardContent className="p-6">
                         <div className="text-center space-y-4">
                           <div className="w-20 h-20 bg-muted rounded-full mx-auto flex items-center justify-center">
-                            <PawPrint className="h-10 w-10 text-primary" />
+                            <img 
+                            src={pet.foto || "/placeholder-pet.png"} 
+                            alt={pet.nome}
+                            className="w-full rounded-full h-full object-cover"
+                            />
                           </div>
                           <div>
                             <h3 className="font-semibold text-lg">{pet.nome || pet.name}</h3>
                             <p className="text-sm text-muted-foreground">
                               {(pet.especie || pet.species) + ' - ' + (pet.raca || pet.breed)}
                             </p>
-                            <p className="text-sm text-muted-foreground">{pet.idade || pet.age}</p>
+                            <p className="text-sm text-muted-foreground">{pet.idade || pet.age} Anos</p>
                           </div>
                           <Button 
                             variant="outline" 
@@ -363,25 +367,26 @@ const DashboardCliente = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Contatos de Emergência</CardTitle>
-                <CardDescription>
-                  Quick access to urgent veterinary care for your pet's well-being.
+                <CardDescription className="py-4">
+                  Contatos rápidos para cuidados veterinários urgentes para o bem-estar do seu pet.
+
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Emergency Vet: 123-456-7890</span>
+                  <span className="text-sm">Veterinario de Emergencia: (84) 98765-4321</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Support Email: support@saudepetublica.com</span>
+                  <span className="text-sm">Email de Suporte: TopPet@saudepet.com</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Our Clinic Address: 123 Pet Lane, Animals City</span>
+                  <span className="text-sm">Endereco da clinica: Rua Pet Top, 230, Cidade Animal</span>
                 </div>
                 <Button size="sm" className="w-full mt-4">
-                  Contact Support
+                  Contatar Suporte
                 </Button>
               </CardContent>
             </Card>
@@ -389,7 +394,7 @@ const DashboardCliente = () => {
         </div>
       </main>
 
-      {/* Newsletter */}
+      {/* Newsletter 
       <footer className="bg-muted py-8">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-lg font-semibold mb-4">Subscribe to our newsletter</h3>
@@ -402,7 +407,7 @@ const DashboardCliente = () => {
             <Button className="bg-primary text-white">Subscribe</Button>
           </div>
         </div>
-      </footer>
+      </footer>*/}
     </div>
   );
 };

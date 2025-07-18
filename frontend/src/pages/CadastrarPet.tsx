@@ -234,7 +234,7 @@ const CadastrarPet = () => {
                 </Button>
                 <Button
                   onClick={handleSalvar}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  className="rounded-md p-3 flex-1 bg-blue-600 hover:bg-blue-700"
                 >
                   Salvar Cadastro
                 </Button>

@@ -28,7 +28,7 @@ export async function signup({
   telefone?: string;
   endereco?: string;
 }) {
-  const res = await fetch("http://localhost:8000/api/users/register/", {
+  const res = await fetch("http://localhost:8000/api/register/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

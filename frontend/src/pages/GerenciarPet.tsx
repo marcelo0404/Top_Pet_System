@@ -201,7 +201,7 @@ const GerenciarPet = () => {
                   <TabsTrigger value="prontuario">Prontuários Médicos</TabsTrigger>
                 </TabsList>
                 <Button onClick={() => navigate(`/agendar`)}>
-                  <Calendar className="w-4 h-4 mr-2" />
+                  {/*<Calendar className="w-4 h-4 mr-2" />*/}
                   Novo Agendamento
                 </Button>
               </div>
@@ -212,7 +212,7 @@ const GerenciarPet = () => {
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Detalhes do Pet</CardTitle>
                     <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4 mr-2" />
+                      {/*<Edit className="w-4 h-4 mr-2" />*/}
                       Editar
                     </Button>
                   </CardHeader>

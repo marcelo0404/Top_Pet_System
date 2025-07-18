@@ -11,6 +11,7 @@ import { ArrowLeft, Edit2, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getPets } from "@/services/petService";
 import { login } from "@/services/authService";
+import Usuario from "@/assets/pet-owner.jpg";
 
 const GerenciarPerfil = () => {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ const GerenciarPerfil = () => {
                 onClick={() => navigate("/dashboard")}
                 className="gap-2"
               >
-                <ArrowLeft className="h-4 w-4" />
+                {/*<ArrowLeft className="h-4 w-4" />*/}
                 Voltar
               </Button>
               <h1 className="text-xl font-semibold">Gerenciar Perfil</h1>
@@ -111,8 +112,12 @@ const GerenciarPerfil = () => {
             <Card>
               <CardContent className="p-6 text-center">
                 <Avatar className="w-32 h-32 mx-auto mb-4">
-                  <AvatarImage src="/lovable-uploads/979dc6ef-db07-4e5f-8725-5a6538d20028.png" />
-                  <AvatarFallback>BO</AvatarFallback>
+                  <img 
+                    src={Usuario} 
+                    alt="Usuario" 
+                    className="w-full h-full object-cover"
+                  />
+                  
                 </Avatar>
                 <h2 className="text-xl font-semibold mb-2">
                   {user ? `${user.first_name} ${user.last_name}` : "Usuário"}
@@ -127,7 +132,7 @@ const GerenciarPerfil = () => {
                   <p>Total de Pets Registrados: {pets.length}</p>
                 </div>
                 <Button variant="outline" className="mt-4 w-full" size="sm">
-                  <Edit2 className="h-4 w-4 mr-2" />
+                  {/*<Edit2 className="h-4 w-4 mr-2" />*/}
                   Editar Perfil
                 </Button>
               </CardContent>
@@ -253,7 +258,7 @@ const GerenciarPerfil = () => {
                           <p className="text-sm text-muted-foreground mb-1">
                             {(pet.especie || pet.species) + ' - ' + (pet.raca || pet.breed)}
                           </p>
-                          <p className="text-sm text-muted-foreground mb-3">{pet.idade || pet.age}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{pet.idade || pet.age} Anos</p>
                           <Button 
                             variant="outline" 
                             size="sm" 

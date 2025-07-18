@@ -15,29 +15,48 @@ const SignupPage = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [newsletter, setNewsletter] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
+    setLoading(true);
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      setLoading(false);
+      return;
+    }
     try {
       await signup({
         username,
         password,
-        confirm_password: password, // ou adicione um campo de confirmação se desejar
+        confirm_password: confirmPassword,
         email,
         first_name: firstName,
         last_name: lastName
       });
       setSuccess(true);
     } catch (err: any) {
-      setError(err?.detail || "Erro ao cadastrar usuário");
+      // Mostra todos os detalhes do erro retornado pelo backend
+      if (err && typeof err === 'object') {
+        setError(
+          Object.entries(err)
+            .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+            .join(' | ')
+        );
+      } else {
+        setError("Erro ao cadastrar usuário");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -164,6 +183,21 @@ const SignupPage = () => {
                 </div>
 
                 <div className="space-y-2 flex flex-col">
+                  <Label htmlFor="confirmPassword" className="text-foreground font-medium">
+                    Confirmar Senha
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Confirme sua senha"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="h-12 border-input focus:border-primary transition-colors"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2 flex flex-col">
                   <Label htmlFor="username" className="text-foreground font-medium">
                     Nome de Usuário
                   </Label>
@@ -217,9 +251,9 @@ const SignupPage = () => {
                 <Button 
                   type="submit" 
                   className="w-full h-12 rounded-lg bg-gradient-primary hover:opacity-90 transition-all duration-300 text-white font-semibold shadow-glow"
-                  disabled={!acceptTerms}
+                  disabled={!acceptTerms || loading}
                 >
-                  Criar Conta
+                  {loading ? "Enviando..." : "Criar Conta"}
                 </Button>
               </form>
 
