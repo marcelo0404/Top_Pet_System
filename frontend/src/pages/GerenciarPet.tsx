@@ -183,7 +183,7 @@ const GerenciarPet = () => {
                     </div>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4 mr-2 text-red-500" />
-                      {pet.data_de_nascimento ? new Date(pet.data_de_nascimento).toLocaleDateString() : "-"}
+                      <p className="text-sm text-muted-foreground mb-3">{pet.idade || pet.age} Anos</p>
                     </div>
                   </div>
                 </div>
@@ -231,8 +231,8 @@ const GerenciarPet = () => {
                         <p className="text-lg">{pet.raca}</p>
                       </div>
                       <div>
-                        <h4 className="font-medium text-muted-foreground mb-1">Data de Nascimento</h4>
-                        <p className="text-lg">{pet.data_de_nascimento ? new Date(pet.data_de_nascimento).toLocaleDateString() : "-"}</p>
+                        <h4 className="font-medium text-muted-foreground mb-1">Idade</h4>
+                        <p className="text-lg">{pet.idade || pet.age} Anos</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Gênero</h4>

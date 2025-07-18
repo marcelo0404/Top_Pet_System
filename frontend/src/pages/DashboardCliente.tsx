@@ -344,11 +344,37 @@ const DashboardCliente = () => {
                 </CardContent>
               </Card>
             </div>
+            <Card className="margin-top:auto">
+              <CardHeader>
+                <h2 className="text-2xl font-bold">Contatos de Emergência</h2>
+                <CardDescription className="py-4">
+                  Contatos rápidos para cuidados veterinários urgentes para o bem-estar do seu pet.
+
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Veterinario de Emergencia: (84) 98765 - 4321</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Email de Suporte: TopPet@saudepet.com</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Endereco da clinica: Rua Pet Top, 230, Cidade Animal</span>
+                </div>
+                <Button size="sm" className="w-full mt-4">
+                  Contatar Suporte
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Calendar */}
+            {/* Calendar 
             <Card>
               <CardHeader>
                 <CardTitle>Calendário</CardTitle>
@@ -361,10 +387,10 @@ const DashboardCliente = () => {
                   className="rounded-md border"
                 />
               </CardContent>
-            </Card>
+            </Card>*/}
 
-            {/* Emergency Contacts */}
-            <Card>
+            {/* Emergency Contacts 
+            <Card className="margin-top:auto">
               <CardHeader>
                 <CardTitle>Contatos de Emergência</CardTitle>
                 <CardDescription className="py-4">
@@ -389,7 +415,7 @@ const DashboardCliente = () => {
                   Contatar Suporte
                 </Button>
               </CardContent>
-            </Card>
+            </Card>*/}
           </div>
         </div>
       </main>
