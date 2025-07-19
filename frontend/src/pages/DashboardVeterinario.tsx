@@ -68,7 +68,10 @@ const DashboardVeterinario = () => {
             </Link>
             <span className="text-muted-foreground">Funcionário</span>
             <span className="text-primary font-medium">Veterinário</span>
-            <span className="text-muted-foreground">Admin</span>
+            <Link to="/admin" className="text-muted-foreground hover:text-foreground">
+              Admin
+            </Link>
+            
           </nav>
 
           {/*<div className="ml-auto flex items-center space-x-4">

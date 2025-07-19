@@ -12,6 +12,8 @@ import CadastrarPet from "./pages/CadastrarPet";
 import DashboardVeterinario from "./pages/DashboardVeterinario";
 import GerenciarPet from "./pages/GerenciarPet";
 import GerenciarPerfil from "./pages/GerenciarPerfil";
+import PainelAdmin from "./pages/PainelAdmin";
+import GestaoServicos from "./pages/GestaoServicos";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/gerenciar-pet/:id" element={<GerenciarPet />} />
             <Route path="/cadastrar-pet" element={<CadastrarPet />} />
             <Route path="/gerenciar-perfil" element={<GerenciarPerfil />} />
+            <Route path="/admin" element={<PainelAdmin />} />
+            <Route path="/gestao-servicos" element={<GestaoServicos />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

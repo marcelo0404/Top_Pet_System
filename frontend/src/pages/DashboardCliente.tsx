@@ -124,7 +124,7 @@ const DashboardCliente = () => {
               </Button>
               <Button variant="ghost">Funcionário</Button>
               <Button variant="ghost" onClick={() => navigate("/veterinario")}>Veterinário</Button>
-              <Button variant="ghost">Admin</Button>
+              <Button variant="ghost" onClick={() => navigate("/admin")}>Admin</Button>
             </div>
             <div className="flex items-center space-x-4">
               {/*<Button variant="outline" size="sm">
@@ -226,7 +226,7 @@ const DashboardCliente = () => {
                 <h2 className="text-2xl font-bold">Próximos compromissos</h2>
                  <Button 
                   size="sm" 
-                  className="bg-primary p-2 rounded-md text-white"
+                  className=" bg-primary p-2 rounded-md text-white hover:bg-primary/90"
                   onClick={() => navigate("/agendar")}
                 >
                   Agendar novo
@@ -268,11 +268,11 @@ const DashboardCliente = () => {
 
             {/* Seus Pets */}
             <div>
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 ">
                 <h2 className="text-2xl font-bold">Seus Pets</h2>
                 <Button 
                   size="sm" 
-                  className="p-2 rounded-lg bg-primary text-white"
+                  className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90"
                   onClick={() => navigate("/cadastrar-pet")}
                 >              
                   {/*<Plus className="h-4 w-4 mr-2" />*/}
