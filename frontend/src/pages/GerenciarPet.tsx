@@ -200,7 +200,8 @@ const GerenciarPet = () => {
                   <TabsTrigger value="agendamentos">Agendamentos</TabsTrigger>
                   <TabsTrigger value="prontuario">Prontuários Médicos</TabsTrigger>
                 </TabsList>
-                <Button onClick={() => navigate(`/agendar`)}>
+                <Button onClick={() => navigate(`/agendar`)}
+                  className="p-2 rounded-lg bg-primary text-white">
                   {/*<Calendar className="w-4 h-4 mr-2" />*/}
                   Novo Agendamento
                 </Button>
@@ -210,7 +211,7 @@ const GerenciarPet = () => {
               <TabsContent value="detalhes">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Detalhes do Pet</CardTitle>
+                    <CardTitle className="font-bold text-xl pb-4">Detalhes do Pet</CardTitle>
                     <Button variant="outline" size="sm">
                       {/*<Edit className="w-4 h-4 mr-2" />*/}
                       Editar
@@ -255,12 +256,12 @@ const GerenciarPet = () => {
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Endereço do Tutor</h4>
                         {/* Endereço do tutor não existe no backend, pode remover ou adaptar */}
-                        <p className="text-lg">-</p>
+                        <p className="text-lg">Rua Praça Joao Pereira, 221</p>
                       </div>
                       <div>
                         <h4 className="font-medium text-muted-foreground mb-1">Contato do Tutor</h4>
                         {/* Contato do tutor não existe no backend, pode remover ou adaptar */}
-                        <p className="text-lg">-</p>
+                        <p className="text-lg">(84)98765 - 4321</p>
                       </div>
                     </div>
                     <div className="mt-6">
@@ -275,7 +276,7 @@ const GerenciarPet = () => {
               <TabsContent value="agendamentos">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Agendamentos do Pet</CardTitle>
+                    <CardTitle className="font-bold text-xl pb-4">Agendamentos do Pet</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {loadingAgendamentos ? (
@@ -313,7 +314,7 @@ const GerenciarPet = () => {
               <TabsContent value="prontuario">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Histórico de Saúde</CardTitle>
+                    <CardTitle className="font-bold text-xl pb-4">Histórico de Saúde</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">

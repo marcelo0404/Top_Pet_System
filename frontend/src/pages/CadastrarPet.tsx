@@ -106,8 +106,16 @@ const CadastrarPet = () => {
             >
               Meus Pets
             </button>
-            <span className="text-muted-foreground">Consultas</span>
-            <span className="text-muted-foreground">Configurações</span>
+            <button onClick={() => navigate("/gerenciar-perfil?tab=meus-pets")}
+            className="text-primary font-medium hover:text-primary/80"
+            >
+              Agendamentos
+            </button>
+            <button onClick={() => navigate("/gerenciar-perfil")}
+              className="text-primary font-medium hover:text-primary/80"
+              >
+              Gerenciar Perfil
+              </button>
           </div>
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-primary-foreground" />
@@ -234,7 +242,7 @@ const CadastrarPet = () => {
                 </Button>
                 <Button
                   onClick={handleSalvar}
-                  className="rounded-md p-3 flex-1 bg-blue-600 hover:bg-blue-700"
+                  className="p-2 rounded-lg bg-primary text-white"
                 >
                   Salvar Cadastro
                 </Button>

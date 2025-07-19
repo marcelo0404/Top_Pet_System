@@ -112,12 +112,13 @@ const DashboardCliente = () => {
     <div className="min-h-screen bg-background">
       {/* Header Navigation */}
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
+        <div className="container  px-4 py-4">
+          <nav className="flex  justify-between">
             <div className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold">TOP PET SYSTEM</span>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center justify-center h-10 space-x-6 ">
               <Button variant="ghost" className="text-primary font-medium">
                 Cliente
               </Button>
@@ -130,7 +131,7 @@ const DashboardCliente = () => {
                 Search services or pets...
               </Button>*/}
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-full"></div>
+                
               </div>
             </div>
           </nav>
@@ -201,7 +202,7 @@ const DashboardCliente = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            {/*<Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-primary/10 rounded-full">
@@ -213,7 +214,7 @@ const DashboardCliente = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card>*/}
           </div>
         </div>
 
@@ -365,7 +366,8 @@ const DashboardCliente = () => {
                   <MapPin className="h-4 w-4 text-primary" />
                   <span className="text-sm">Endereco da clinica: Rua Pet Top, 230, Cidade Animal</span>
                 </div>
-                <Button size="sm" className="w-full mt-4">
+                <Button size="sm" 
+                  className="bg-red-500 p-2 rounded-md text-white mt-4">
                   Contatar Suporte
                 </Button>
               </CardContent>

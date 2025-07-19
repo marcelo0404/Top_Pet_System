@@ -27,11 +27,11 @@ const DashboardVeterinario = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Ativo":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Ativo</Badge>;
+        return <Badge variant="secondary" className="p-0.5 rounded-lg bg-green-100 text-green-800">Ativo</Badge>;
       case "Pendente":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
+        return <Badge variant="secondary" className="p-0.5 rounded-lg bg-yellow-100 text-yellow-800">Pendente</Badge>;
       case "Arquivado":
-        return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Arquivado</Badge>;
+        return <Badge variant="secondary" className="p-0.5 rounded-lg bg-gray-100 text-gray-800">Arquivado</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -59,7 +59,7 @@ const DashboardVeterinario = () => {
         <div className="flex h-16 items-center px-6">
           <div className="flex items-center space-x-2">
             <Stethoscope className="h-6 w-6 text-primary" />
-            <span className="text-lg font-semibold">A Área Pública</span>
+            <span className="text-lg font-semibold">TOP PET SYSTEM</span>
           </div>
           
           <nav className="ml-8 flex space-x-6">
@@ -71,7 +71,7 @@ const DashboardVeterinario = () => {
             <span className="text-muted-foreground">Admin</span>
           </nav>
 
-          <div className="ml-auto flex items-center space-x-4">
+          {/*<div className="ml-auto flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -84,7 +84,7 @@ const DashboardVeterinario = () => {
                 V
               </div>
             </Button>
-          </div>
+          </div>*/}
         </div>
       </header>
 
@@ -145,11 +145,13 @@ const DashboardVeterinario = () => {
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardHeader className="flex flex-row items-center pb-2">
+                <AlertTriangle className="h-6 w-6 text-red-500 px-1" />
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   Alertas Críticos
+                  
                 </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-red-500" />
+                
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-600">3</div>
@@ -200,8 +202,8 @@ const DashboardVeterinario = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Registros Médicos</CardTitle>
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button className="rounded-lg p-2 bg-primary hover:bg-primary/90">
+                  {/*<Plus className="h-4 w-4 mr-2" />*/}
                   Add Novo Registro
                 </Button>
               </div>
@@ -214,7 +216,7 @@ const DashboardVeterinario = () => {
                   />
                 </div>
                 <Button variant="outline">
-                  <Filter className="h-4 w-4 mr-2" />
+                  {/*<Filter className="h-4 w-4 mr-2" />*/}
                   Filtros
                 </Button>
               </div>

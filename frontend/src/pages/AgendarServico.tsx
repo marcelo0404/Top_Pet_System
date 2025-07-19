@@ -282,7 +282,7 @@ const AgendarServico = () => {
           )}
           {/* Botão de Agendar */}
           <Button 
-            className="w-full bg-primary text-white py-6 text-lg"
+            className="rounded-full w-full bg-primary text-white py-4 text-lg"
             disabled={!isFormComplete || agendamentoLoading}
             onClick={handleSchedule}
           >

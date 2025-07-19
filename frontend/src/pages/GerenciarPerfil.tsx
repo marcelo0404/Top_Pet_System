@@ -158,7 +158,7 @@ const GerenciarPerfil = () => {
               <TabsContent value="info" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Informações Pessoais</CardTitle>
+                    <CardTitle className="py-3 text-xl font-bold">Informações Pessoais</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <form onSubmit={async (e) => {
@@ -179,51 +179,54 @@ const GerenciarPerfil = () => {
                     }}>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2 flex flex-col">
-                        <Label htmlFor="nome">Nome Completo</Label>
-                        <Input id="nome" name="nome" defaultValue={user ? `${user.first_name} ${user.last_name}` : ""} />
+                        {/*<Label htmlFor="nome">Nome Completo</Label>
+                        <Input id="nome" name="nome" defaultValue={user ? `${user.first_name} ${user.last_name}` : ""} />*/}
+                        <h4 className="pt-4 font-medium text-muted-foreground mb-1">Nome</h4>
+                        <p className="text-lg">{user ? `${user.first_name} ${user.last_name}` : ""}</p>
                       </div>
                       <div className="space-y-2 flex flex-col">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" name="email" defaultValue={user?.email || ""} />
+                        <h4 className="pt-4 font-medium text-muted-foreground mb-1">Email</h4>
+                        <p className="text-lg">{user?.email}</p>                        
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2 flex flex-col">
-                        <Label htmlFor="telefone">Telefone</Label>
-                        <Input id="telefone" name="telefone" defaultValue={user?.profile?.telefone || ""} />
+                        <h4 className="pt-4 font-medium text-muted-foreground mb-1">Telefone</h4>
+                        <p className="text-lg">{user?.profile?.telefone || "(84) 98765 - 4321"}</p>                        
                       </div>
                       <div className="space-y-2 flex flex-col">
-                        <Label htmlFor="pais">País</Label>
-                        <Input id="pais" name="pais" value="Brasil" readOnly />
+                        <h4 className="pt-4 font-medium text-muted-foreground mb-1">Pais</h4>
+                        <p className="text-lg">Brasil</p>
                       </div>
                     </div>
 
                     <div className="space-y-2 flex flex-col">
-                      <Label htmlFor="estado">Estado</Label>
-                      <Input id="estado" name="estado" defaultValue={user?.profile?.endereco || ""} />
+                      <h4 className="pt-4 font-medium text-muted-foreground mb-1">Estado</h4>
+                      <p className="text-lg">{user?.profile?.endereco || "RN"}</p>
                     </div>
 
                     <div className="space-y-2 flex flex-col">
-                      <Label htmlFor="endereco">Endereço Completo</Label>
-                      <Input id="endereco" name="endereco" defaultValue={user?.profile?.endereco || ""} />
+                      <h4 className="pt-4 font-medium text-muted-foreground mb-1">Endereço</h4>
+                      <p className="text-lg">{user?.profile?.endereco || "Rua Praça Joao Pereira, 221"}</p>                      
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="bio">Bio / Sobre Mim</Label>
-                      <Textarea 
+                      <h4 className="pt-4 font-medium text-muted-foreground mb-1">Bio / Sobre mim</h4>
+                      <p className="text-lg ">{user?.profile?.bio || "Adoro cuidar dos meus pets"}</p>
+                      {/*<Textarea 
                         id="bio" 
                         name="bio"
                         rows={4}
                         defaultValue={user?.profile?.especialidade || ""}
-                      />
+                      />*/}
                     </div>
 
-                    <div className="flex justify-end">
-                      <Button className="rounded-md p-3 bg-[#FF6B47] hover:bg-[#E55A3E] text-white" type="submit">
+                    {/*<div className="flex justify-end">
+                      <Button className="p-2 rounded-lg bg-primary text-white" type="submit">
                         Salvar Alterações
                       </Button>
-                    </div>
+                    </div>*/}
                     </form>
                   </CardContent>
                 </Card>
@@ -235,7 +238,7 @@ const GerenciarPerfil = () => {
                   <h2 className="text-2xl font-semibold">Meus Pets</h2>
                   <Button 
                     onClick={() => navigate("/cadastrar-pet")}
-                    className="rounded-md p-3 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="p-2 rounded-lg bg-primary text-white"
                   >
                     {/*<Plus className="h-4 w-4 mr-2" />*/}
                     Add Novo Pet
@@ -297,7 +300,7 @@ const GerenciarPerfil = () => {
                     </div>
 
                     <div className="flex justify-end ">
-                      <Button className="rounded-md p-3 bg-[#FF6B47] hover:bg-[#E55A3E] text-white">
+                      <Button className="p-2 rounded-lg bg-primary text-white">
                         Salvar Alterações
                       </Button>
                     </div>
