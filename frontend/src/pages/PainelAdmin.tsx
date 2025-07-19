@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,15 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Eye, Edit, Trash2, Plus, Search, Users, PawPrint, UserCheck, UserX } from "lucide-react";
+import { getAllUsers, User } from "@/services/userService"; // Ajuste o caminho se necessário
 
 const PainelAdmin = () => {
   const navigate = useNavigate();
+   const [users, setUsers] = useState<User[]>([]);
+   const [isLoading, setIsLoading] = useState(true);
   const [searchClientes, setSearchClientes] = useState("");
   const [searchPets, setSearchPets] = useState("");
 
+
   // Dados mock dos clientes
   const clientes = [
-    { id: "cli001", nome: "Ana Silva", email: "ana.silva@email.com", telefone: "(11) 98765-4321", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
+    { id: "2", nome: "Marcelo",sobrenome:"Vieira", email: "ana.silva@email.com", telefone: "(11) 98765-4321", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
     { id: "cli002", nome: "Bruno Mendes", email: "bruno.mendes@email.com", telefone: "(21) 91234-5678", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
     { id: "cli003", nome: "Carla Souza", email: "carla.souza@email.com", telefone: "(31) 99876-1234", funcao: "Veterinário", status: "Pendente", registro: "15-01-2023" },
     { id: "cli004", nome: "Daniel Costa", email: "daniel.costa@email.com", telefone: "(41) 96543-8765", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
@@ -26,12 +30,13 @@ const PainelAdmin = () => {
 
   // Dados mock dos pets
   const pets = [
-    { id: "cli001", nome: "Toto", especie: "Cão", raca: "Vira-Lata", tutor: "Ana", status: "Ativo", registro: "10-07-2025" },
-    { id: "cli002", nome: "Tobi", especie: "Cão", raca: "Vira-Lata", tutor: "João", status: "Ativo", registro: "10-07-2025" },
-    { id: "cli003", nome: "Eva", especie: "Cão", raca: "Pastor-alemão", tutor: "Carlos", status: "Pendente", registro: "10-07-2025" },
-    { id: "cli004", nome: "Panda", especie: "Gato", raca: "Vira-Lata", tutor: "Maria", status: "Ativo", registro: "10-07-2025" },
-    { id: "cli005", nome: "Luna", especie: "Peixe", raca: "Beta", tutor: "Julia", status: "Inativo", registro: "10-07-2025" },
-    { id: "cli006", nome: "Tapioca", especie: "Galinha", raca: "Indefinida", tutor: "Tonha", status: "Ativo", registro: "10-07-2025" }
+    { id: "8", nome: "Eva", especie: "Cao", raca: "ViraLata", tutor: "Julia", status: "Ativo", registro: "july 17,2025" },
+    { id: "9", nome: "Thor", especie: "Cao", raca: "Golden", tutor: "Werbert", status: "Ativo", registro: "july 18,2025" },
+    { id: "10", nome: "Panda", especie: "cao", raca: "ViraLata", tutor: "Werbert", status: "Ativo", registro: "july 18,2025" },
+    { id: "11", nome: "Tobi", especie: "Cao", raca: "Pastor_alemao", tutor: "JoaoP", status: "Ativo", registro: "july 19,2025" },
+    { id: "12", nome: "Zefinha", especie: "Galinha", raca: "Indefinida", tutor: "JoaoM", status: "Ativo", registro: "july 20,2025" },
+    { id: "13", nome: "Luna", especie: "Gato", raca: "ViraLata", tutor: "JoaoM", status: "Ativo", registro: "july 20,2025" },
+    { id: "14", nome: "Afonso", especie: "Peixe", raca: "Beta", tutor: "JoaoM", status: "Ativo", registro: "july 20,2025" }
   ];
 
   const getStatusBadge = (status: string) => {
@@ -102,21 +107,21 @@ const PainelAdmin = () => {
               <CardContent>
                 <div className="grid grid-cols-4 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">152</div>
+                    <div className="text-2xl font-bold text-foreground">7</div>
                     <div className="text-sm text-muted-foreground">Total de Clientes</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">134</div>
+                    <div className="text-2xl font-bold text-foreground">7</div>
                     <div className="text-sm text-muted-foreground">Clientes Ativos</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">23</div>
+                    <div className="text-2xl font-bold text-foreground">7</div>
                     <div className="text-sm text-muted-foreground">Novos Registros (30 dias)</div>
                   </div>
-                  <div className="text-center">
+                  {/*<div className="text-center">
                     <div className="text-2xl font-bold text-foreground">3</div>
                     <div className="text-sm text-muted-foreground">Pendentes de Aprovação</div>
-                  </div>
+                  </div>*/}
                 </div>
               </CardContent>
             </Card>
@@ -138,7 +143,7 @@ const PainelAdmin = () => {
                     <SelectItem value="todos">Todos</SelectItem>
                     <SelectItem value="ativo">Ativo</SelectItem>
                     <SelectItem value="inativo">Inativo</SelectItem>
-                    <SelectItem value="pendente">Pendente</SelectItem>
+                    {/*<SelectItem value="pendente">Pendente</SelectItem>*/}
                   </SelectContent>
                 </Select>
                 <Select defaultValue="todos">
@@ -147,6 +152,7 @@ const PainelAdmin = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos</SelectItem>
+                    <SelectItem value="Cliente">Cliente</SelectItem>
                     <SelectItem value="tutor">Tutor</SelectItem>
                     <SelectItem value="veterinario">Veterinário</SelectItem>
                   </SelectContent>
@@ -214,30 +220,30 @@ const PainelAdmin = () => {
             {/* Métricas dos Pets */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 py-6">
                   <PawPrint className="w-5 h-5" />
                   Visão Geral dos Pets
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Métricas rápidas sobre a base de Pets do sistema.</p>
+                
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-4 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">89</div>
+                    <div className="text-2xl font-bold text-foreground">14</div>
                     <div className="text-sm text-muted-foreground">Total de Pets</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">76</div>
+                    <div className="text-2xl font-bold text-foreground">7</div>
                     <div className="text-sm text-muted-foreground">Pets Ativos</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-foreground">12</div>
+                    <div className="text-2xl font-bold text-foreground">14</div>
                     <div className="text-sm text-muted-foreground">Novos Registros (30 dias)</div>
                   </div>
-                  <div className="text-center">
+                  {/*<div className="text-center">
                     <div className="text-2xl font-bold text-foreground">2</div>
                     <div className="text-sm text-muted-foreground">Pendentes de Aprovação</div>
-                  </div>
+                  </div>*/}
                 </div>
               </CardContent>
             </Card>
