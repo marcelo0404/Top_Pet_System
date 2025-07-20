@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Edit, Trash2, FileText, DollarSign } from "lucide-react";
+import { Heart,Search, Plus, Edit, Trash2, FileText, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,66 +37,42 @@ interface Servico {
   descricao: string;
   preco: number;
   duracao: number;
-  status: "Ativo" | "Rascunho";
+  status: "Ativo" | "Rascunho" ;
 }
 
 const servicosMock: Servico[] = [
   {
     id: 1,
-    nome: "Banho e Tosa Completa",
-    descricao: "Serviço de banho, tosa higiênica e corte de pelos, incluindo secagem e escovação.",
-    preco: 85.00,
-    duracao: 90,
-    status: "Ativo"
-  },
-  {
-    id: 2,
-    nome: "Consulta Veterinária Geral",
-    descricao: "Avaliação da saúde geral do seu pet, diagnóstico de doenças comuns e prescrição de tratamentos.",
-    preco: 120.00,
-    duracao: 45,
-    status: "Ativo"
-  },
-  {
-    id: 3,
-    nome: "Vacinação (V8/V10)",
-    descricao: "Aplicação de vacina múltipla para cães (V8 ou V10), incluindo exame clínico prévio.",
-    preco: 95.00,
-    duracao: 20,
-    status: "Ativo"
-  },
-  {
-    id: 4,
-    nome: "Hotel para Pequenos Pets",
-    descricao: "Hospedagem diária em ambiente seguro e confortável para cães e gatos de pequeno porte.",
-    preco: 70.00,
-    duracao: 1440,
-    status: "Ativo"
-  },
-  {
-    id: 5,
-    nome: "Adestramento Básico",
-    descricao: "Sessões de adestramento para comandos básicos como sentar, ficar e vir, foco em obediência.",
-    preco: 250.00,
-    duracao: 60,
-    status: "Rascunho"
-  },
-  {
-    id: 6,
-    nome: "Natação Terapêutica",
-    descricao: "Sessões de hidroterapia para pets com problemas articulares ou em recuperação pós-cirúrgica.",
+    nome: "Vacinacao",
+    descricao: "Colocar a carteira vacinal em dia.",
     preco: 150.00,
     duracao: 30,
     status: "Ativo"
   },
   {
-    id: 7,
-    nome: "Passeio Diário",
-    descricao: "Passeio de 30 minutos em grupo ou individual, para cães com necessidades de exercício.",
-    preco: 30.00,
-    duracao: 30,
+    id: 2,
+    nome: "Consulta",
+    descricao: "Uma consulta com o medico veterinario",
+    preco: 350.00,
+    duracao: 60,
     status: "Ativo"
-  }
+  },
+  {
+    id: 3,
+    nome: "Banho e Tosa",
+    descricao: "Banho e Tosa",
+    preco: 130.00,
+    duracao: 60,
+    status: "Ativo"
+  },
+  {
+    id: 4,
+    nome: "Exame de Sangue",
+    descricao: "Exame de Sangue",
+    preco: 120.00,
+    duracao: 20,
+    status: "Ativo"
+  }  
 ];
 
 const GestaoServicos = () => {
@@ -214,14 +190,16 @@ const GestaoServicos = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-primary rounded-lg"></div>
+                
+                <Heart className="h-8 w-8 text-primary" />
                 <span className="text-xl font-bold">TOP PET SYSTEM</span>
               </div>
               <nav className="flex gap-6">
-                <button onClick={() => navigate("/admin")} >Visão Geral</button>
-                <span className="text-primary font-medium border-b-2 border-primary pb-1">Gestão de Serviços</span>
-                <span className="text-muted-foreground">Clientes</span>
-                <span className="text-muted-foreground">Relatórios</span>
+                <button className="text-muted-foreground hover:text-foreground"
+                onClick={() => navigate("/admin")} >Visão Geral</button>
+                <span className="text-muted-foreground hover:text-foreground">Gestão de Serviços</span>
+                <span className="text-muted-foreground hover:text-foreground">Configurações</span>
+                <span className="text-muted-foreground hover:text-foreground">Relatórios</span>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -229,12 +207,9 @@ const GestaoServicos = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   placeholder="Pesquisar..." 
-                  className="pl-10 w-64"
+                  className="pl-10 w-64 rounded-lg"
                 />
-              </div>
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
-                TS
-              </div>
+              </div>              
             </div>
           </div>
         </div>
@@ -246,8 +221,8 @@ const GestaoServicos = () => {
           <h1 className="text-3xl font-bold">Gestão de Serviços</h1>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button onClick={handleAddServico} className="gap-2">
-                <Plus className="h-4 w-4" />
+              <Button onClick={handleAddServico} className="bg-primary p-2 rounded-md text-white">
+                {/*<Plus className="h-4 w-4" />*/}
                 Adicionar Novo Serviço
               </Button>
             </DialogTrigger>
@@ -337,7 +312,7 @@ const GestaoServicos = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total de Serviços Ativos
               </CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              {/*<FileText className="h-4 w-4 text-muted-foreground" />*/}
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{servicosAtivos}</div>
@@ -348,7 +323,7 @@ const GestaoServicos = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Serviço Mais Solicitado
               </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              {/*<DollarSign className="h-4 w-4 text-muted-foreground" />*/}
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{servicoMaisSolicitado}</div>

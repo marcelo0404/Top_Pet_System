@@ -20,12 +20,13 @@ const PainelAdmin = () => {
 
   // Dados mock dos clientes
   const clientes = [
-    { id: "2", nome: "Marcelo",sobrenome:"Vieira", email: "ana.silva@email.com", telefone: "(11) 98765-4321", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
-    { id: "cli002", nome: "Bruno Mendes", email: "bruno.mendes@email.com", telefone: "(21) 91234-5678", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
-    { id: "cli003", nome: "Carla Souza", email: "carla.souza@email.com", telefone: "(31) 99876-1234", funcao: "Veterinário", status: "Pendente", registro: "15-01-2023" },
-    { id: "cli004", nome: "Daniel Costa", email: "daniel.costa@email.com", telefone: "(41) 96543-8765", funcao: "Tutor", status: "Ativo", registro: "15-01-2023" },
-    { id: "cli005", nome: "Eva Oliveira", email: "eva.oliveira@email.com", telefone: "(51) 87777-1111", funcao: "Tutor", status: "Inativo", registro: "15-01-2023" },
-    { id: "cli006", nome: "Felipe Santos", email: "felipe.santos@email.com", telefone: "(61) 95555-2222", funcao: "Veterinário", status: "Ativo", registro: "15-01-2023" }
+    { id: "2", nome: "Marcelo", sobrenome:"Vieira", email: "marcelovieira@gmail.com", Usuario: "marcelo" , status: "Ativo", registro: "july 14,2025" },
+    { id: "3", nome: "Julia",sobrenome:"Araujo", email: "juliaaraujo@gmail.com", Usuario: "Julia", status: "Ativo", registro: "july 14,2025" },
+    { id: "4", nome: "Marcelo", sobrenome:"Viera", email: "marcelovieira@gmail.com", Usuario: "Marcelo1",  status: "Ativo", registro: "july 18,2025" },
+    { id: "5", nome: "Usuario",sobrenome:"1", email: "usuario1@gmail.com", Usuario: "Usuario",  status: "Ativo", registro: "july 18,2025" },
+    { id: "6", nome: "Werbert",sobrenome:"Arles", email: "werbert@gmail.com", Usuario: "Werbert",  status: "Ativo", registro: "july 18,2025" },
+    { id: "7", nome: "Joao", sobrenome:"Pereira" ,email: "Joaopereira@gmail.com", Usuario: "JoaoP",  status: "Ativo", registro: "july 19,2025" },
+    { id: "8", nome: "Joao", sobrenome:"Maria" ,email: "joaomaria@gmail.com", Usuario: "JoaoM",  status: "Ativo", registro: "july 20,2025" }
   ];
 
   // Dados mock dos pets
@@ -64,12 +65,15 @@ const PainelAdmin = () => {
               </div>
               <span className="text-xl font-bold">TOP PET SYSTEM</span>
             </div>
-            <nav className="flex space-x-6 text-sm">
+            <nav className="flex space-x-6">
               <a href="#" className="text-muted-foreground hover:text-foreground">Visão Geral</a>
-              <a href="#" className="text-muted-foreground hover:text-foreground">Relatórios</a>
+              <button onClick={() => navigate("/gestao-servicos")} 
+              className="text-muted-foreground hover:text-foreground">
+                Gestão de Serviços
+                </button>
               <a href="#" className="text-muted-foreground hover:text-foreground">Configurações</a>
-              <button onClick={() => navigate("/gestao-servicos")}>
-                Serviços
+              <button className="text-muted-foreground hover:text-foreground">
+                Relatórios
               </button>              
             </nav>
           </div>
@@ -176,9 +180,10 @@ const PainelAdmin = () => {
                     <TableRow>
                       <TableHead>ID</TableHead>
                       <TableHead>Nome</TableHead>
+                      <TableHead>Sobrenome</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Telefone</TableHead>
-                      <TableHead>Função</TableHead>
+                      <TableHead>Usuario</TableHead>
+                      
                       <TableHead>Status</TableHead>
                       <TableHead>Registro</TableHead>
                       <TableHead>Ações</TableHead>
@@ -189,9 +194,10 @@ const PainelAdmin = () => {
                       <TableRow key={cliente.id}>
                         <TableCell className="font-mono text-sm">{cliente.id}</TableCell>
                         <TableCell className="font-medium">{cliente.nome}</TableCell>
+                        <TableCell>{cliente.sobrenome}</TableCell>
                         <TableCell>{cliente.email}</TableCell>
-                        <TableCell>{cliente.telefone}</TableCell>
-                        <TableCell>{cliente.funcao}</TableCell>
+                        <TableCell>{cliente.Usuario}</TableCell>
+                        
                         <TableCell>{getStatusBadge(cliente.status)}</TableCell>
                         <TableCell>{cliente.registro}</TableCell>
                         <TableCell>
